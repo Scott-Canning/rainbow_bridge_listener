@@ -12,6 +12,10 @@ const Listener = () => {
     useEffect(() => {
         Aos.init({duration: 2000});
         let SHA256 = require("crypto-js/sha256");
+        if(transactions.length > 10) {
+            let newTransactions = transactions.shift()
+            setTransactions(newTransactions);
+        }
         const listener = async () => {
             const bridgeAddress = "0x6BFaD42cFC4EfC96f529D786D643Ff4A8B89FA52";
             const url = process.env.REACT_APP_MAINNET_URL;
@@ -45,9 +49,7 @@ const Listener = () => {
              });
         }
         listener();
-        if(transactions.length > 5) {
-            setTransactions(transactions.shift());
-        }
+
     }, []);
 
     function convertTimestamp(UNIX_timestamp){
@@ -73,13 +75,14 @@ const Listener = () => {
                         <b>{tx.type}</b>
                     </div>
                     <div className="From">
-                        <b>From: </b> {tx.from}
+                        { tx.type === "Deposit" ? <b>From: </b> : null }
+                        { tx.from }
                     </div>
                     <div className="To">
                         <b>To: </b>  {tx.to}
                     </div>
                     <div className="Amount">
-                        Amount: <b> {tx.amount} </b> ETH
+                        <b> Amount: </b> {tx.amount}  ETH
                     </div>
                 </div>
                 ) : (
